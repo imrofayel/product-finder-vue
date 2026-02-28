@@ -1,6 +1,24 @@
 <script setup lang="ts">
 import AppHeader from '@/components/AppHeader.vue';
 import FilterDropdown from '@/components/FilterDropdown.vue';
+import type { FilterConfig } from '@/types';
+
+const filters: FilterConfig[] = [
+    { field: 'product_interface', label: 'Product Interface', type: 'checkbox' },
+    { field: 'density_class', label: 'Density Class', type: 'checkbox' },
+    { field: 'seq_read_performance_mb_s', label: 'Seq. Read Perf.', type: 'range', unit: 'MB/s' },
+    { field: 'product_series', label: 'Product Series', type: 'checkbox' },
+    { field: 'form_factor', label: 'Form Factor', type: 'checkbox' },
+    { field: 'temp_grade', label: 'Temp. Grade', type: 'checkbox' },
+    { field: 'seq_write_performance_mb_s', label: 'Seq. Write Perf.', type: 'range', unit: 'MB/s' },
+    { field: 'swissbit_part_number', label: 'Part Number', type: 'text' },
+    { field: 'flash_type', label: 'Flash Type', type: 'checkbox' },
+    { field: 'endurance_rnd', label: 'Endurance', type: 'endurance' },
+    { field: 'rnd_read_performance_iops', label: 'Rand. Read Perf.', type: 'range', unit: 'IOPS' },
+    { field: 'for_new_design', label: 'For new design', type: 'checkbox' },
+    { field: 'rnd_write_performance', label: 'Rand. Write Perf.', type: 'range', unit: 'IOPS' },
+    { field: 'status_pf', label: 'Status', type: 'checkbox' },
+]
 
 </script>
 
