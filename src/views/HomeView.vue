@@ -129,7 +129,7 @@ function resetAllFilters() {
     <AppHeader />
 
     <div class="bg-[#d6edfd] pb-8">
-        <div class="pt-14 flex flex-col gap-6 items-center">
+        <div class="pt-14 flex dark:text-black/90 flex-col gap-6 items-center">
             <h1 class="text-5xl">Find your product</h1>
             <div>
                 <div class="text-xl">Use the filters and parameters to minimize the
