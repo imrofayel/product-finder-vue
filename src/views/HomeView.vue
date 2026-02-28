@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
 import AppHeader from '@/components/AppHeader.vue'
 import ProductsTable from '@/components/ProductsTable.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 import type { FilterConfig } from '@/types'
+import { useProductsStore } from '@/stores/useProductsStore'
+import { storeToRefs } from 'pinia'
 
 const filters: FilterConfig[] = [
     { field: 'product_interface', label: 'Product Interface', type: 'checkbox' },
@@ -22,13 +23,7 @@ const filters: FilterConfig[] = [
     { field: 'status_pf', label: 'Status', type: 'checkbox' },
 ]
 
-const products = ref<any[]>([])
-
-onMounted(async () => {
-    const res = await fetch('/api/products.json')
-    const data = await res.json()
-    products.value = Object.values(data.content.products)
-})
+const { products } = storeToRefs(useProductsStore())
 
 </script>
 
