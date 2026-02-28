@@ -1,7 +1,7 @@
 <template>
     <svg id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2"
         baseProfile="tiny" x="0px" y="0px" viewBox="0 0 425.2 72.3" xml:space="preserve" display="block"
-        class="text-[#009FE3] w-40 transition-[width] duration-500 scrolled:fixed-header:w-34 scrolled:fixed-header:w-34">
+        class="text-[#009FE3] w-38 transition-[width] duration-500 scrolled:fixed-header:w-34 scrolled:fixed-header:w-34">
         <g>
             <path fill="currentColor"
                 d="M308.6,62.3c1.3-0.8,2.4-1.9,3.3-3.2c1.8-3,2.7-7.2,2.7-12.6c0-6.3-1.1-10.8-3.4-13.5   c-2.3-2.7-6-4.1-11.2-4.1h-12.5v35.3h12c3.3,0,5.9-0.4,7.9-1.2C307.8,62.8,308.2,62.6,308.6,62.3z M287.5,20.7h14.3   c4.8,0,8.5,0.5,11,1.5c4.2,1.7,7.3,4.7,9.5,9.1c1.9,3.9,2.9,8.7,2.9,14.4c0,8.8-1.9,15.5-5.7,20c-2.2,2.5-4.8,4.3-7.9,5.2   c-3.1,0.9-7.8,1.4-14,1.4h-20.3V1.6h10.2V20.7z">

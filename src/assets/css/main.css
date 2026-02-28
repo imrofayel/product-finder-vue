@@ -19,3 +19,7 @@ body {
     text-rendering: optimizeLegibility;
     font-display: swap;
 }
+
+body {
+    @apply hidden 2xl:block
+}

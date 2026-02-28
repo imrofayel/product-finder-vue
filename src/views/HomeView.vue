@@ -7,7 +7,7 @@ import type { FilterConfig } from '@/types'
 import { useProductsStore } from '@/stores/useProductsStore'
 import { storeToRefs } from 'pinia'
 import { uniqueValues } from '@/utils/filters'
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 
 const filters: FilterConfig[] = [
     { field: 'product_interface', label: 'Product Interface', type: 'checkbox' },
@@ -28,17 +28,100 @@ const filters: FilterConfig[] = [
 
 const { products } = storeToRefs(useProductsStore())
 
+const checkboxSelections = reactive<Record<string, Set<string>>>({})
+
+const rangeSelections = reactive<Record<string, [number, number]>>({})
+
+const partNumber = ref('')
+
 const filterValues = computed(() => {
     const map: Record<string, string[]> = {}
     for (const filter of filters) {
         if (filter.type === 'checkbox' || filter.type === 'endurance') {
             map[filter.field] = uniqueValues(filter.field, products.value)
         }
-    }
-    return map
+    } return map
 })
 
-const partNumber = ref('Click to clear')
+function toggleCheckbox(field: string, value: string, checked: boolean) {
+    if (!checkboxSelections[field]) {
+        checkboxSelections[field] = new Set()
+    }
+    if (checked) {
+        checkboxSelections[field].add(value)
+    } else {
+        checkboxSelections[field].delete(value)
+    }
+}
+
+function isChecked(field: string, value: string): boolean {
+    return checkboxSelections[field]?.has(value) ?? false
+}
+
+function onRangeUpdate(field: string, val: [number, number]) {
+    rangeSelections[field] = val
+}
+
+function activeFilterCount(filter: FilterConfig): number {
+    if (filter.type === 'checkbox' || filter.type === 'endurance') {
+        return checkboxSelections[filter.field]?.size ?? 0
+    }
+    if (filter.type === 'range') {
+        const sel = rangeSelections[filter.field]
+        if (!sel) return 0
+        const values = uniqueValues(filter.field, products.value, true).map(Number)
+        if (!values.length) return 0
+        const dataMin = Math.min(...values)
+        const dataMax = Math.max(...values)
+        return (sel[0] !== dataMin || sel[1] !== dataMax) ? 1 : 0
+    }
+    if (filter.type === 'text') {
+        return partNumber.value.length > 0 ? 1 : 0
+    }
+    return 0
+}
+
+const filteredProducts = computed(() => {
+    return products.value.filter(product => {
+        if (partNumber.value.length > 0) {
+            if (!product.swissbit_part_number.includes(partNumber.value.toUpperCase())) return false
+        }
+
+        for (const filter of filters) {
+            if (filter.type === 'checkbox' || filter.type === 'endurance') {
+                const selected = checkboxSelections[filter.field]
+                if (selected && selected.size > 0) {
+                    const val = product[filter.field]
+                    if (!selected.has(val)) return false
+                }
+            }
+
+            if (filter.type === 'range') {
+                const sel = rangeSelections[filter.field]
+                if (sel) {
+                    const num = Number(product[filter.field])
+                    if (!isNaN(num) && num !== 0) {
+                        if (num < sel[0] || num > sel[1]) return false
+                    }
+                }
+            }
+        }
+
+        return true
+    })
+})
+
+function resetAllFilters() {
+    for (const key of Object.keys(checkboxSelections)) {
+        checkboxSelections[key] = new Set()
+    }
+
+    for (const key of Object.keys(rangeSelections)) {
+        delete rangeSelections[key]
+    }
+
+    partNumber.value = ''
+}
 
 </script>
 
@@ -58,13 +141,15 @@ const partNumber = ref('Click to clear')
         <div class="grid grid-cols-4 gap-8 gap-y-4 max-w-7xl mx-auto mt-8">
 
             <div v-for="filter in filters" :key="filter.field">
-                <FilterDropdown :title="filter.label" :active-filters="0">
+                <FilterDropdown :title="filter.label" :active-filters="activeFilterCount(filter)">
                     <template #default>
                         <div v-if="filter.type === 'checkbox' || filter.type === 'endurance'">
                             <div v-for="value in filterValues[filter.field]" :key="value" class="my-2.5">
-                                <UCheckbox :value="value" :name="filter.field" :ui="{
-                                    label: 'text-[18px] font-normal'
-                                }">
+                                <UCheckbox :model-value="isChecked(filter.field, value)"
+                                    @update:model-value="(checked: boolean | 'indeterminate') => toggleCheckbox(filter.field, value, !!checked)"
+                                    :name="filter.field" :ui="{
+                                        label: 'text-[18px] font-normal'
+                                    }">
                                     <template #label>
                                         <span v-if="filter.type === 'endurance'" class="flex items-center gap-2">
                                             <UIcon v-for="n in Number(value)" :key="n" name="i-lucide:battery-charging"
@@ -77,7 +162,8 @@ const partNumber = ref('Click to clear')
                         </div>
 
                         <RangeFilter v-else-if="filter.type === 'range'" :field="filter.field" :products="products"
-                            :unit="filter.unit" />
+                            :unit="filter.unit"
+                            @update:model-value="(val?: [number, number]) => val && onRangeUpdate(filter.field, val)" />
 
                         <div v-else-if="filter.type === 'text'" class="py-1">
                             <UInput placeholder="Search" variant="subtle" size="lg" v-model="partNumber" :ui="{
@@ -102,12 +188,13 @@ const partNumber = ref('Click to clear')
 
     <div class="max-w-7xl mx-auto mt-4">
         <div class="pt-4 pb-6 flex items-center justify-between">
-            <span class="text-2xl">We have found {{ products.length }} items.</span>
+            <span class="text-2xl">We have found {{ filteredProducts.length }} items.</span>
 
             <div class="text-primary flex gap-6 text-[18px]">
-                <UButton variant="text" class="px-0 text-lg font-medium" trailing-icon="i-lucide:filter-x" :ui="{
-                    trailingIcon: 'size-5.5'
-                }">Reset all
+                <UButton variant="text" class="px-0 text-lg font-medium cursor-pointer"
+                    trailing-icon="i-lucide:filter-x" :ui="{
+                        trailingIcon: 'size-5.5'
+                    }" @click="resetAllFilters">Reset all
                     filters
                 </UButton>
 
@@ -122,7 +209,7 @@ const partNumber = ref('Click to clear')
                 </UButton>
             </div>
         </div>
-        <ProductsTable :products="products" />
+        <ProductsTable :products="filteredProducts" />
     </div>
 
 </template>
