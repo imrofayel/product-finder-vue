@@ -5,6 +5,8 @@ import FilterDropdown from '@/components/FilterDropdown.vue'
 import type { FilterConfig } from '@/types'
 import { useProductsStore } from '@/stores/useProductsStore'
 import { storeToRefs } from 'pinia'
+import { uniqueValues } from '@/utils/filters'
+import { computed } from 'vue'
 
 const filters: FilterConfig[] = [
     { field: 'product_interface', label: 'Product Interface', type: 'checkbox' },
@@ -25,6 +27,16 @@ const filters: FilterConfig[] = [
 
 const { products } = storeToRefs(useProductsStore())
 
+const filterValues = computed(() => {
+    const map: Record<string, string[]> = {}
+    for (const filter of filters) {
+        if (filter.type === 'checkbox' || filter.type === 'endurance') {
+            map[filter.field] = uniqueValues(filter.field, products.value)
+        }
+    }
+    return map
+})
+
 </script>
 
 <template>
@@ -41,41 +53,28 @@ const { products } = storeToRefs(useProductsStore())
         </div>
 
         <div class="grid grid-cols-4 gap-8 max-w-7xl mx-auto mt-8">
-            <FilterDropdown title="Series" :active-filters="0">
-                <template #>
-                    <div>
-                        <label class="block text-sm mb-1">Your Swissbit Part Number</label>
-                        <UInput placeholder="" class="w-full" />
-                    </div>
-                </template>
-            </FilterDropdown>
 
-            <FilterDropdown title="Series" :active-filters="2">
-                <template #>
-                    <div>
-                        <label class="block text-sm mb-1">Your Swissbit Part Number</label>
-                        <UInput placeholder="" class="w-full" />
-                    </div>
-                </template>
-            </FilterDropdown>
-
-            <FilterDropdown title="Series" :active-filters="2">
-                <template #>
-                    <div>
-                        <label class="block text-sm mb-1">Your Swissbit Part Number</label>
-                        <UInput placeholder="" class="w-full" />
-                    </div>
-                </template>
-            </FilterDropdown>
-
-            <FilterDropdown title="Series" :active-filters="2">
-                <template #>
-                    <div>
-                        <label class="block text-sm mb-1">Your Swissbit Part Number</label>
-                        <UInput placeholder="" class="w-full" />
-                    </div>
-                </template>
-            </FilterDropdown>
+            <div v-for="filter in filters" :key="filter.field">
+                <FilterDropdown :title="filter.label" :active-filters="0">
+                    <template #default>
+                        <div v-if="filter.type === 'checkbox' || filter.type === 'endurance'">
+                            <div v-for="value in filterValues[filter.field]" :key="value" class="my-2.5">
+                                <UCheckbox :value="value" :name="filter.field" :ui="{
+                                    label: 'text-[18px] font-normal'
+                                }">
+                                    <template #label>
+                                        <span v-if="filter.type === 'endurance'" class="flex items-center gap-2">
+                                            <UIcon v-for="n in Number(value)" :key="n" name="i-lucide:battery-charging"
+                                                class="size-5.5" />
+                                        </span>
+                                        <span v-else>{{ value }}</span>
+                                    </template>
+                                </UCheckbox>
+                            </div>
+                        </div>
+                    </template>
+                </FilterDropdown>
+            </div>
         </div>
     </div>
 

@@ -10,7 +10,7 @@ const props = defineProps<{
 <template>
     <div class="flex gap-2 items-center">
         <UPopover :content="{ sideOffset: 0, collisionPadding: 0 }"
-            :ui="{ content: 'w-(--reka-popper-anchor-width) p-4 rounded-t-none! rounded border-t-0 shadow' }">
+            :ui="{ content: 'w-(--reka-popper-anchor-width) p-3 py-1.5 rounded-t-none! rounded border-t-0 shadow' }">
 
             <template #default="{ open }">
                 <UButton :trailing-icon="open ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" variant="outline"
@@ -25,7 +25,9 @@ const props = defineProps<{
             </template>
 
             <template #content>
-                <slot name="default" />
+                <div class="max-h-50 overflow-y-scroll">
+                    <slot name="default" />
+                </div>
             </template>
         </UPopover>
         <UTooltip :delay-duration="0"
