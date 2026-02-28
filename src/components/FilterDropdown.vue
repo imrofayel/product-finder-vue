@@ -15,7 +15,7 @@ const props = defineProps<{
             <template #default="{ open }">
                 <UButton :trailing-icon="open ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'" variant="outline"
                     :color="activeFilters > 0 ? 'primary' : 'neutral'"
-                    :class="['w-64 justify-between font-normal text-[18px] rounded px-3 py-1.5 active:bg-transparent focus:bg-transparent hover:bg-transparent hover:shadow', open && 'rounded-b-none!', activeFilters > 0 && 'text-default']">
+                    :class="['w-64 justify-between font-normal text-[18px] rounded px-3 py-1.5 active:bg-transparent focus:bg-transparent dark:bg-black/50 hover:bg-transparent hover:shadow', open && 'rounded-b-none!', activeFilters > 0 && 'text-default']">
                     <span class="flex items-center gap-2">
                         {{ title }}
                         <UBadge v-if="activeFilters > 0" :label="activeFilters" color="primary" size="sm"

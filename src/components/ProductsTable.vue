@@ -36,14 +36,14 @@ const columns: TableColumn<Product>[] = [
     {
         accessorKey: 'swissbit_part_number',
         header: () => h('div', { class: 'flex flex-col' }, [
-            h('div', { class: 'pb-3 px-3 border-b-4  border-white' }, 'Part Number'),
+            h('div', { class: 'pb-3 px-3 border-b-4 dark:border-default  border-white' }, 'Part Number'),
             h('div', { class: 'pt-3' }, '\u00A0')
         ])
     },
     {
         id: 'series_density',
         header: () => h('div', { class: 'flex flex-col' }, [
-            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'Series'),
+            h('div', { class: 'pb-3 px-3 border-b-4 dark:border-default border-white' }, 'Series'),
             h('div', { class: 'pt-3 px-3' }, 'Density Class')
         ]),
         cell: ({ row }) => h('div', [
@@ -54,7 +54,7 @@ const columns: TableColumn<Product>[] = [
     {
         id: 'interface_form',
         header: () => h('div', { class: 'flex flex-col' }, [
-            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'Product Interface'),
+            h('div', { class: 'pb-3 px-3 border-b-4 dark:border-default border-white' }, 'Product Interface'),
             h('div', { class: 'pt-3 px-3' }, 'Form Factor')
         ]),
         cell: ({ row }) => h('div', [
@@ -65,7 +65,7 @@ const columns: TableColumn<Product>[] = [
     {
         id: 'temp_flash',
         header: () => h('div', { class: 'flex flex-col' }, [
-            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'Temp. Grade'),
+            h('div', { class: 'pb-3 px-3 border-b-4 dark:border-default border-white' }, 'Temp. Grade'),
             h('div', { class: 'pt-3 px-3' }, 'Flash Type')
         ]),
         cell: ({ row }) => h('div', [
@@ -76,7 +76,7 @@ const columns: TableColumn<Product>[] = [
     {
         id: 'design_endurance',
         header: () => h('div', { class: 'flex flex-col' }, [
-            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'New Design'),
+            h('div', { class: 'pb-3 px-3 border-b-4 dark:border-default border-white' }, 'New Design'),
             h('div', { class: 'pt-3 px-3' }, 'Endurance')
         ]),
         cell: ({ row }) => {
@@ -90,7 +90,7 @@ const columns: TableColumn<Product>[] = [
     {
         id: 'seq_perf',
         header: () => h('div', { class: 'flex flex-col' }, [
-            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'SRP MB/s'),
+            h('div', { class: 'pb-3 px-3 border-b-4 dark:border-default border-white' }, 'SRP MB/s'),
             h('div', { class: 'pt-3 px-3' }, 'SWP MB/s')
         ]),
         cell: ({ row }) => h('div', [
@@ -101,7 +101,7 @@ const columns: TableColumn<Product>[] = [
     {
         id: 'rnd_perf',
         header: () => h('div', { class: 'flex flex-col' }, [
-            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'RRP IOPS'),
+            h('div', { class: 'pb-3 px-3 border-b-4 dark:border-default border-white' }, 'RRP IOPS'),
             h('div', { class: 'pt-3 px-3' }, 'RWP IOPS')
         ]),
         cell: ({ row }) => h('div', [
@@ -112,7 +112,7 @@ const columns: TableColumn<Product>[] = [
     {
         id: 'status_avail',
         header: () => h('div', { class: 'flex flex-col' }, [
-            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'Status'),
+            h('div', { class: 'pb-3 px-3 border-b-4 dark:border-default border-white' }, 'Status'),
             h('div', { class: 'pt-3 px-3' }, 'Availability')
         ]),
         cell: ({ row }) => h('div', [
@@ -126,10 +126,10 @@ const columns: TableColumn<Product>[] = [
 <template>
     <UTable ref="table" :data="products" :columns="columns" :sticky="true" class="flex-1 max-h-[calc(100vh-320px)]" :ui="{
         base: 'min-w-full rounded-lg border-separate border-spacing-0',
-        th: 'bg-neutral-100/80 px-0 py-3 text-[16.5px] text-left font-medium border-r-4 text-black/85 border-white last:border-r-0',
+        th: 'bg-neutral-100/80 dark:border-default dark:bg-black/50 px-0 py-3 text-[16.5px] text-left font-medium border-r-4 text-black/85 dark:text-white/90 border-white last:border-r-0',
         thead: 'sticky top-0 z-10',
-        td: 'px-4 py-4 text-[16px] border-r-2 border-white last:border-r-0 text-black/90',
-        tr: 'border-b-2 border-white',
-        tbody: '[&>tr]:border-b-2 [&>tr]:border-white'
+        td: 'px-4 py-4 text-[16px] border-r-2 border-white dark:border-default last:border-r-0 dark:text-white/90 text-black/90',
+        tr: 'border-b-2 border-white dark:border-default',
+        tbody: '[&>tr]:border-b-2 dark:border-default [&>tr]:border-white'
     }" />
 </template>
