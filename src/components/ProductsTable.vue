@@ -124,9 +124,10 @@ const columns: TableColumn<Product>[] = [
 </script>
 
 <template>
-    <UTable ref="table" :data="products" :columns="columns" class="flex-1" :ui="{
+    <UTable ref="table" :data="products" :columns="columns" :sticky="true" class="flex-1 max-h-[calc(100vh-320px)]" :ui="{
         base: 'min-w-full rounded-lg border-separate border-spacing-0',
         th: 'bg-neutral-100/80 px-0 py-3 text-[16.5px] text-left font-medium border-r-4 text-black/85 border-white last:border-r-0',
+        thead: 'sticky top-0 z-10',
         td: 'px-4 py-4 text-[16px] border-r-2 border-white last:border-r-0 text-black/90',
         tr: 'border-b-2 border-white',
         tbody: '[&>tr]:border-b-2 [&>tr]:border-white'
