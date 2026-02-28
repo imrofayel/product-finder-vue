@@ -128,7 +128,7 @@ function resetAllFilters() {
 <template>
     <AppHeader />
 
-    <div>
+    <div class="bg-[#d6edfd] pb-8">
         <div class="pt-14 flex flex-col gap-6 items-center">
             <h1 class="text-5xl">Find your product</h1>
             <div>
