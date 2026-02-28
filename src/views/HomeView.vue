@@ -7,7 +7,7 @@ import type { FilterConfig } from '@/types'
 import { useProductsStore } from '@/stores/useProductsStore'
 import { storeToRefs } from 'pinia'
 import { uniqueValues } from '@/utils/filters'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const filters: FilterConfig[] = [
     { field: 'product_interface', label: 'Product Interface', type: 'checkbox' },
@@ -38,6 +38,8 @@ const filterValues = computed(() => {
     return map
 })
 
+const partNumber = ref('Click to clear')
+
 </script>
 
 <template>
@@ -53,7 +55,7 @@ const filterValues = computed(() => {
             </div>
         </div>
 
-        <div class="grid grid-cols-4 gap-8 max-w-7xl mx-auto mt-8">
+        <div class="grid grid-cols-4 gap-8 gap-y-4 max-w-7xl mx-auto mt-8">
 
             <div v-for="filter in filters" :key="filter.field">
                 <FilterDropdown :title="filter.label" :active-filters="0">
@@ -76,6 +78,22 @@ const filterValues = computed(() => {
 
                         <RangeFilter v-else-if="filter.type === 'range'" :field="filter.field" :products="products"
                             :unit="filter.unit" />
+
+                        <div v-else-if="filter.type === 'text'" class="py-1">
+                            <UInput placeholder="Search" variant="subtle" size="lg" v-model="partNumber" :ui="{
+                                base: 'placeholder:text-[17.6px] text-[17.6px]!'
+                            }" class="px-1 relative right-1">
+                                <template #trailing>
+
+                                    <UButton color="neutral" variant="link" size="md" icon="i-lucide-circle-x"
+                                        class="relative -right-1.5" aria-label="Clear input" @click="partNumber = ''"
+                                        v-if="partNumber?.length" />
+
+                                    <UButton color="neutral" variant="link" size="md" icon="i-lucide-search"
+                                        aria-label="Search" class="relative -right-1.5" v-else />
+                                </template>
+                            </UInput>
+                        </div>
                     </template>
                 </FilterDropdown>
             </div>
