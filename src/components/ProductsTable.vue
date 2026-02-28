@@ -1,75 +1,134 @@
 <script setup lang="ts">
+import { h, resolveComponent, useTemplateRef } from 'vue'
+import type { TableColumn } from '@nuxt/ui'
+import type { Product } from '@/types'
+
+const UCheckbox = resolveComponent('UCheckbox')
 
 defineProps<{
-    products: any[]
+    products: Product[]
 }>()
 
+const table = useTemplateRef('table')
+
+const columns: TableColumn<Product>[] = [
+    {
+        id: 'select',
+        header: ({ table }) => h(UCheckbox, {
+            'modelValue': table.getIsSomePageRowsSelected() ? 'indeterminate' : table.getIsAllPageRowsSelected(),
+            'onUpdate:modelValue': (value: boolean | 'indeterminate') => table.toggleAllPageRowsSelected(!!value),
+            'aria-label': 'Select all',
+            class: 'px-5',
+        }),
+        cell: ({ row }) => h('div', { class: 'flex items-center gap-2' }, [
+            h(UCheckbox, {
+                'modelValue': row.getIsSelected(),
+                'onUpdate:modelValue': (value: boolean | 'indeterminate') => row.toggleSelected(!!value),
+                'aria-label': 'Select row'
+            }),
+            row.original.image
+                ? h('img', { src: row.original.image, width: 100 })
+                : null
+        ]),
+        enableSorting: false,
+        enableHiding: false
+    },
+    {
+        accessorKey: 'swissbit_part_number',
+        header: () => h('div', { class: 'flex flex-col' }, [
+            h('div', { class: 'pb-3 px-3 border-b-4  border-white' }, 'Part Number'),
+            h('div', { class: 'pt-3' }, '\u00A0')
+        ])
+    },
+    {
+        id: 'series_density',
+        header: () => h('div', { class: 'flex flex-col' }, [
+            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'Series'),
+            h('div', { class: 'pt-3 px-3' }, 'Density Class')
+        ]),
+        cell: ({ row }) => h('div', [
+            h('div', row.original.product_series || ''),
+            h('div', row.original.density || '')
+        ])
+    },
+    {
+        id: 'interface_form',
+        header: () => h('div', { class: 'flex flex-col' }, [
+            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'Product Interface'),
+            h('div', { class: 'pt-3 px-3' }, 'Form Factor')
+        ]),
+        cell: ({ row }) => h('div', [
+            h('div', row.original.product_interface || ''),
+            h('div', row.original.form_factor || '')
+        ])
+    },
+    {
+        id: 'temp_flash',
+        header: () => h('div', { class: 'flex flex-col' }, [
+            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'Temp. Grade'),
+            h('div', { class: 'pt-3 px-3' }, 'Flash Type')
+        ]),
+        cell: ({ row }) => h('div', [
+            h('div', row.original.temp_grade || ''),
+            h('div', row.original.flash_type || '')
+        ])
+    },
+    {
+        id: 'design_endurance',
+        header: () => h('div', { class: 'flex flex-col' }, [
+            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'New Design'),
+            h('div', { class: 'pt-3 px-3' }, 'Endurance')
+        ]),
+        cell: ({ row }) => {
+            const endurance = Number(row.original.endurance_rnd)
+            return h('div', [
+                h('div', row.original.for_new_design || ''),
+                h('div', endurance ? '●'.repeat(endurance) : '')
+            ])
+        }
+    },
+    {
+        id: 'seq_perf',
+        header: () => h('div', { class: 'flex flex-col' }, [
+            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'SRP MB/s'),
+            h('div', { class: 'pt-3 px-3' }, 'SWP MB/s')
+        ]),
+        cell: ({ row }) => h('div', [
+            h('div', String(row.original.seq_read_performance_mb_s ?? '')),
+            h('div', String(row.original.seq_write_performance_mb_s ?? ''))
+        ])
+    },
+    {
+        id: 'rnd_perf',
+        header: () => h('div', { class: 'flex flex-col' }, [
+            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'RRP IOPS'),
+            h('div', { class: 'pt-3 px-3' }, 'RWP IOPS')
+        ]),
+        cell: ({ row }) => h('div', [
+            h('div', String(row.original.rnd_read_performance_iops ?? '')),
+            h('div', String(row.original.rnd_write_performance ?? ''))
+        ])
+    },
+    {
+        id: 'status_avail',
+        header: () => h('div', { class: 'flex flex-col' }, [
+            h('div', { class: 'pb-3 px-3 border-b-4 border-white' }, 'Status'),
+            h('div', { class: 'pt-3 px-3' }, 'Availability')
+        ]),
+        cell: ({ row }) => h('div', [
+            h('div', row.original.status_pf || ''),
+            h('div', 'n/a')
+        ])
+    }
+]
 </script>
 
 <template>
-    <table class="mt-6 w-full">
-        <thead>
-            <tr>
-                <th></th>
-                <th>Part Number</th>
-                <th>Product Series</th>
-                <th>Product Interface</th>
-                <th>Temp. Grade</th>
-                <th>New Design</th>
-                <th>SRP MB/s</th>
-                <th>SRP IOPS</th>
-                <th>Status</th>
-            </tr>
-            <tr>
-                <th></th>
-                <th></th>
-                <th>Density</th>
-                <th>Form Factor</th>
-                <th>Flash Type</th>
-                <th>Endurance</th>
-                <th>SWP MB/s</th>
-                <th>RWP IOPS</th>
-                <th>Online Availability</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="product in products" :key="product.swissbit_part_number">
-                <td class="flex items-center gap-1">
-                    <input type="checkbox" />
-                    <img v-if="product.image" :src="product.image" width="100" />
-                </td>
-                <td>{{ product.swissbit_part_number }}</td>
-                <td>
-                    {{ product.product_series }}<br />
-                    {{ product.density }}
-                </td>
-                <td>
-                    {{ product.product_interface }}<br />
-                    {{ product.form_factor }}
-                </td>
-                <td>
-                    {{ product.temp_grade }}<br />
-                    {{ product.flash_type }}
-                </td>
-                <td>
-                    {{ product.for_new_design }}<br />
-                    <span v-if="product.endurance_rnd">
-                        <span v-for="n in Number(product.endurance_rnd)" :key="n">●</span>
-                    </span>
-                </td>
-                <td>
-                    {{ product.seq_read_performance_mb_s }} MB/s<br />
-                    {{ product.seq_write_performance_mb_s }} MB/s
-                </td>
-                <td>
-                    {{ product.rnd_read_performance_iops }} IOPS<br />
-                    {{ product.rnd_write_performance }} IOPS
-                </td>
-                <td>
-                    {{ product.status_pf }}<br />
-                    n/a
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <UTable ref="table" :data="products" :columns="columns" class="flex-1" :ui="{
+        base: 'min-w-full rounded-lg border-separate border-spacing-0',
+        th: 'bg-neutral-100/80 px-0 py-3 text-[16.5px] text-left font-medium border-r-4 text-black/85 border-white last:border-r-0',
+        td: 'px-4 py-4 text-[16px] border-r-2 border-white last:border-r-0 text-black/90',
+        tr: 'border-b-2 border-white',
+        tbody: '[&>tr]:border-b-2 [&>tr]:border-white'
+    }" />
 </template>

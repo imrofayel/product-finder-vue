@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import AppHeader from '@/components/AppHeader.vue';
-import FilterDropdown from '@/components/FilterDropdown.vue';
-import type { FilterConfig } from '@/types';
+import { ref, onMounted } from 'vue'
+import AppHeader from '@/components/AppHeader.vue'
+import ProductsTable from '@/components/ProductsTable.vue'
+import FilterDropdown from '@/components/FilterDropdown.vue'
+import type { FilterConfig } from '@/types'
 
 const filters: FilterConfig[] = [
     { field: 'product_interface', label: 'Product Interface', type: 'checkbox' },
@@ -19,6 +21,14 @@ const filters: FilterConfig[] = [
     { field: 'rnd_write_performance', label: 'Rand. Write Perf.', type: 'range', unit: 'IOPS' },
     { field: 'status_pf', label: 'Status', type: 'checkbox' },
 ]
+
+const products = ref<any[]>([])
+
+onMounted(async () => {
+    const res = await fetch('/api/products.json')
+    const data = await res.json()
+    products.value = Object.values(data.content.products)
+})
 
 </script>
 
@@ -72,6 +82,31 @@ const filters: FilterConfig[] = [
                 </template>
             </FilterDropdown>
         </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto mt-4">
+        <div class="pt-4 pb-6 flex items-center justify-between">
+            <span class="text-2xl">We have found {{ products.length }} items.</span>
+
+            <div class="text-primary flex gap-6 text-[18px]">
+                <UButton variant="text" class="px-0 text-lg font-medium" trailing-icon="i-lucide:filter-x" :ui="{
+                    trailingIcon: 'size-5.5'
+                }">Reset all
+                    filters
+                </UButton>
+
+                <UButton variant="text" class="px-0 text-lg font-medium" trailing-icon="i-lucide:message-circle" :ui="{
+                    trailingIcon: 'size-5.5'
+                }">Send request
+                </UButton>
+
+                <UButton variant="text" class="px-0 text-lg font-medium" trailing-icon="i-lucide:share-2" :ui="{
+                    trailingIcon: 'size-5.5'
+                }">Share result list
+                </UButton>
+            </div>
+        </div>
+        <ProductsTable :products="products" />
     </div>
 
 </template>
