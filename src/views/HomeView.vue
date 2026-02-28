@@ -2,6 +2,7 @@
 import AppHeader from '@/components/AppHeader.vue'
 import ProductsTable from '@/components/ProductsTable.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
+import RangeFilter from '@/components/RangeFilter.vue'
 import type { FilterConfig } from '@/types'
 import { useProductsStore } from '@/stores/useProductsStore'
 import { storeToRefs } from 'pinia'
@@ -72,6 +73,9 @@ const filterValues = computed(() => {
                                 </UCheckbox>
                             </div>
                         </div>
+
+                        <RangeFilter v-else-if="filter.type === 'range'" :field="filter.field" :products="products"
+                            :unit="filter.unit" />
                     </template>
                 </FilterDropdown>
             </div>
